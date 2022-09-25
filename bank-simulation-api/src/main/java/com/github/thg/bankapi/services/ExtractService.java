@@ -48,6 +48,16 @@ public class ExtractService extends GenericServiceImpl<Extract, Long>{
 		return extract;
 	}
 	
+	public Extract generateSlip(Conta conta, TipoOperacao tipo,Double saldoAnterior,Double saldoAtual, Double value) {
+		Calendar date = Calendar.getInstance();
+		
+		Extract extract = new Extract(date, tipo, saldoAnterior,saldoAtual, value, conta);
+		extract.setInformation(createInformationSlip(conta, tipo, value, date));
+		extract = extractRepository.save(extract);
+		return extract;
+	}
+	
+	
 	private String createInformation(Boolean credit, Conta conta, TipoOperacao tipo, Double value, Calendar date) {
 		if(credit) {
 			return informationWithdraw(conta, tipo, value, date);
@@ -55,6 +65,12 @@ public class ExtractService extends GenericServiceImpl<Extract, Long>{
 			return informationDeposit(conta, tipo, value, date);
 		}
 	}
+	
+	private String createInformationSlip(Conta conta, TipoOperacao tipo, Double value, Calendar date) {
+			return informationSlip(conta, tipo, value, date);
+		
+	}
+	
 
 	private String informationWithdraw(Conta conta, TipoOperacao tipo, Double value,Calendar date) {
 		if(TipoOperacao.SAQUE.equals(tipo)) {
@@ -78,6 +94,18 @@ public class ExtractService extends GenericServiceImpl<Extract, Long>{
 		} else {
 			return String.format("DATA: %s" + "\n" 
 					+ "DEPÓSITO DE R$ %.2f", dataUtil.dataFormatada(date.getTime()), conta);
+		}
+
+	}
+	
+	private String informationSlip(Conta conta, TipoOperacao tipo, Double value, Calendar date) {
+		if(TipoOperacao.PAGAMENTO.equals(tipo)) {
+			return String.format("DATA: %s \n"
+			+ "BOLETO PAGO COM SUCESSO! VALOR DE R$ %.2f\n" 
+			+ "INFORMAÇÕES DO CLIENTE: %s %s, CONTA %s AG: %s", dataUtil.dataFormatada(date.getTime()), value, conta.getClient().getFirstName().split(" ")[0],
+			conta.getClient().getLastName().split(" ")[0],conta.getNumber(), conta.getAgency().getNumber());
+		} else {
+			return "Erro ao gerar o extrato";
 		}
 
 	}

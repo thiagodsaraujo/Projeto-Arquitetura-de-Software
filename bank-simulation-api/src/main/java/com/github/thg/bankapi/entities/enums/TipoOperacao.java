@@ -2,7 +2,7 @@ package com.github.thg.bankapi.entities.enums;
 
 public enum TipoOperacao {
 	
-DEPOSITO("Deposito"), SAQUE("Saque"), TRANSFERENCIA("Transferência");
+DEPOSITO("Deposito"), SAQUE("Saque"), PAGAMENTO("Pagamento");
 	
 	private String descricao;
 	

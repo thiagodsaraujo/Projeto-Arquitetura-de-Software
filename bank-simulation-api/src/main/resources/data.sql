@@ -18,5 +18,5 @@ INSERT INTO AGENCY(number, name, banco_id) VALUES ('0001-1', 'Nubank', 3);
 INSERT INTO AGENCY(number, name, banco_id) VALUES ('0002-1', 'Nubank Vip', 3);
 
 
-INSERT INTO CONTA(number, saldo, agency_id,client_id) VALUES ('00001-0', 0.0, 1,1);
+INSERT INTO CONTA(number, saldo, agency_id,client_id) VALUES ('00001-0', 10000, 1,1);
 INSERT INTO CONTA(number, saldo, agency_id,client_id) VALUES ('00001-1', 0.0, 1,2);

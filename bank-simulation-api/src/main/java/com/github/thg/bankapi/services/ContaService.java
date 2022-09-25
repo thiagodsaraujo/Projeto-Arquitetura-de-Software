@@ -6,11 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.thg.bankapi.entities.Conta;
 import com.github.thg.bankapi.repositories.ContaRepository;
 import com.github.thg.bankapi.services.exceptions.IntegrityDataException;
 import com.github.thg.bankapi.services.exceptions.ObjectNotFoundException;
+import com.github.thg.bankapi.services.exceptions.SaldoInsuficienteException;
+import com.github.thg.bankapi.services.exceptions.ValorInvalidoException;
 
 @Service
 public class ContaService extends GenericServiceImpl<Conta,Long>{
@@ -41,9 +44,25 @@ public class ContaService extends GenericServiceImpl<Conta,Long>{
 		return contaRepository.findAll();
 	}
 	
-	
-	public Conta getPayment(Long id, Double valor) {
+	@Transactional
+	public Conta getPayment(Long id, Double valor) throws SaldoInsuficienteException {
+		
+		if (valor == null) {
+			throw new ValorInvalidoException("Valor não pode ser zero");
+		}
+		
 		Conta contaProcurada = search(id);
+		
+		if (contaProcurada == null) {
+			throw new ObjectNotFoundException(
+					"Objeto não encontrado! Id: " + id + ", Tipo: " + Conta.class.getName());
+		}
+		
+		if (contaProcurada.getSaldo() < valor) {
+			throw new SaldoInsuficienteException("Saldo Insuficiente! Saldo Atual: R$"
+					+ contaProcurada.getSaldo() + ", Valor da Operação: R$ " + valor);
+		}
+		
 		contaProcurada.setSaldo(contaProcurada.getSaldo() - valor);
 		return contaRepository.save(contaProcurada);
 	}

@@ -66,7 +66,7 @@ public class PaymentSlipController {
 		return ResponseEntity.ok(boletos);
 	}
 	
-	@PostMapping("boleto/{id}/{valor}")
+	@PostMapping("boletoTeste/{id}/{valor}")
 	public boolean generatePaymentSlip(@PathVariable Long id,
 			@PathVariable Double valor) {
 		if (contaRequest.generatePayment(id, valor) != null) {
@@ -75,8 +75,8 @@ public class PaymentSlipController {
 		return false;
 	}
 	
-	@PostMapping("pgtoboleto/{contaId}/{slipId}")
-	public HttpStatus generatePaymentSlip2(
+	@PostMapping("conta/{contaId}/boleto/{slipId}")
+	public String generatePaymentSlip2(
 			@PathVariable Long contaId,
 			@PathVariable Long slipId) {
 		PaymentSlip boleto = paymentSlipService.findById(slipId);
@@ -85,9 +85,25 @@ public class PaymentSlipController {
 			System.out.println(boleto.toString());
 		}		
 		if (contaRequest.generatePayment(contaId, boleto.getValueSlip()) != null) {
-			return HttpStatus.OK;
+			HttpStatus ok = HttpStatus.OK;
+			return "Código do Boleto " + boleto.getId() + boleto.getCodeSlip()
+			+ " / Valor: R$ " + boleto.getValueSlip() +
+			" / Pago com Sucesso! " + ok;
 		}
-		return HttpStatus.EXPECTATION_FAILED;
+		return "Erro ao pagar o boleto";
+	}
+	
+	@PostMapping("pgto/conta/{contaId}/boleto/{slipId}")
+	public String generatePaymentSlip3(
+			@PathVariable Long contaId,
+			@PathVariable Long slipId) {
+		PaymentSlip boleto = paymentSlipService.findById(slipId);	
+		if (contaRequest.generatePaymentSlip(contaId, boleto.getValueSlip()) != null) {
+			return "Código do Boleto " + boleto.getId() + boleto.getCodeSlip()
+			+ " / Valor: R$ " + boleto.getValueSlip() +
+			" / Pago com Sucesso! ";
+		}
+		return "Erro ao pagar o boleto";
 	}
 	
 	

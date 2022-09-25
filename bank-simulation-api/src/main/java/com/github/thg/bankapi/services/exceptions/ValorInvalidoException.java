@@ -1,6 +1,6 @@
 package com.github.thg.bankapi.services.exceptions;
 
-public class ValorInvalidoException extends Exception {
+public class ValorInvalidoException extends RuntimeException {
 
     /**
 	 * 

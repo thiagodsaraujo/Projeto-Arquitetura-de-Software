@@ -29,6 +29,8 @@ public interface ContaRequest {
 	ResponseEntity<Conta> generatePayment(@PathVariable Long id,
 			@PathVariable Double valor);
 	
-	
+	@PutMapping("/attslip/{id}/{valor}")
+	ResponseEntity<Conta> generatePaymentSlip(@PathVariable Long id,
+			@PathVariable Double valor);
 	
 } 
