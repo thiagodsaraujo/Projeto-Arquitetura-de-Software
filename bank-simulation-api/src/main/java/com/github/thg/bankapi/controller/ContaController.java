@@ -85,7 +85,7 @@ public class ContaController {
 		if (contaDeposito.getSaldo() >= valor) {
 			contaDeposito.setSaldo(contaDeposito.getSaldo() - valor);
 		} else {
-			throw new SaldoInsuficienteException("Saldo Insuficiente!");
+			throw new SaldoInsuficienteException("Saldo Insuficiente!!");
 		}
 		Extract extractSlip = extractService.generateSlip(contaDeposito, TipoOperacao.PAGAMENTO, saldoAnterior,
 				contaDeposito.getSaldo(), valor);
