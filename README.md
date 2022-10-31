@@ -6,10 +6,10 @@
 
 
 API para transações bancárias de contas correntes (depositar, sacar e extrato)
-          - O serviço deve saber quem é o cliente.
-          - O serviço deve conseguir gerenciar vários clientes.
+- O serviço deve saber quem é o cliente.
+- O serviço deve conseguir gerenciar vários clientes.
 API para processar pagamentos de boletos.
-          - O serviço deve consultar o saldo do cliente para realizar o pagamento.
+- O serviço deve consultar o saldo do cliente para realizar o pagamento.
          
 <b>SEGUNDA PARTE</b>
 
