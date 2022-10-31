@@ -13,8 +13,8 @@ public class ApiGatewayConfiguration {
         return builder.routes()
                 .route(r -> r.path("/get")
                         .filters(p-> p
-                                .addRequestHeader("token", "hghghhhgjghghas")
-                                .addRequestParameter("cpf", "89009844390"))
+                                .addRequestHeader("token", "tita")
+                                .addRequestParameter("cpf", "1234"))
                         .uri("http://httpbin.org:80"))
                 .route(p-> p
                         .path("/conta/**")
