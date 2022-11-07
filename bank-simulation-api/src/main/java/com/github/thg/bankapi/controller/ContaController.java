@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +46,7 @@ public class ContaController {
 	
 	@GetMapping("/test")
 	public String getTest() {
-		return "Isso é um teste Feign2";
+		return "Isso é um teste Feign - Transferencia2";
 	}
 	
 	@GetMapping("/listContas")
@@ -68,17 +67,14 @@ public class ContaController {
 	@PutMapping(value = "/attSaldo/{id}/{valor}")
 	public ResponseEntity<Conta> getPayment(@PathVariable Long id, 
 			@PathVariable Double valor) throws SaldoInsuficienteException{
-		
 		return ResponseEntity.ok(contaService.getPayment(id, valor));
 	}
 	
 	@PutMapping(value = "/attslip/{id}/{valor}")
 	public ResponseEntity<Extract> getPaymentSlip(@PathVariable Long id, 
 			@PathVariable Double valor) throws Exception, SaldoInsuficienteException{
-		
 		Conta contaDeposito = contaRepository.findById(id)
 				.orElseThrow(()-> new Exception("Conta not found for this id :" + id));
-		
 		// Devia atualizar o saldo por um método do service, ta errado
 		Double saldoAnterior = contaDeposito.getSaldo();
 		
@@ -94,7 +90,42 @@ public class ContaController {
 		return ResponseEntity.ok(extractSlip);
 	}
 	
+	@PostMapping("/transferencia/{idContaOrigem}/{valor}/{idContaDestino}")
+	public ResponseEntity<Extract> getTransfer(@PathVariable Long idContaOrigem, 
+			@PathVariable Double valor, 
+			@PathVariable Long idContaDestino) throws Exception, SaldoInsuficienteException{
+		
+		Conta contaDestino = contaRepository.findById(idContaDestino)
+				.orElseThrow(()-> new Exception("Conta not found for this id :" + idContaDestino));
+		
+		Conta contaOrigem = contaRepository.findById(idContaOrigem)
+				.orElseThrow(()-> new Exception("Conta not found for this id :" + idContaOrigem));
+		
+		Double saldoAnterior = contaOrigem.getSaldo();
+		Double saldoAtual= contaOrigem.getSaldo() - valor;
+		
+		if (contaOrigem.getSaldo() >= valor) {
+			contaDestino.setSaldo(contaDestino.getSaldo() + valor);
+		} else {
+			throw new SaldoInsuficienteException("Saldo Insuficiente!!");
+		}
+		
+		Extract extractTransfer = extractService.generateTransfer(contaOrigem, contaDestino, 
+				TipoOperacao.TRANSFERENCIA, saldoAnterior,saldoAtual,valor);
+		
+		ResponseEntity.ok(contaService.getPayment(idContaOrigem, valor));
+		return ResponseEntity.ok(extractTransfer);
+	}
 	
+	
+	@PostMapping(value = "/attTransfer/{idContaOrigem}/{valor}/{idContaDestino}")
+	public String postTransfer(
+			@PathVariable Long idContaOrigem, 
+			@PathVariable Double valor, 
+			@PathVariable Long idContaDestino) throws SaldoInsuficienteException{
+		
+		return "Transferência realizada com sucesso";
+	}
 	
 	@PostMapping(value = "/createConta")
 	public ResponseEntity<Conta> createConta( 

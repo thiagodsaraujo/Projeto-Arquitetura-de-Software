@@ -20,8 +20,14 @@ public class ApiGatewayConfiguration {
                         .path("/conta/**")
                         .uri("lb://bank-simulation-api"))
                 .route(p-> p
+                		.path("/bank/**")
+                		.uri("lb://bank-simulation-api"))
+                .route(p-> p
                         .path("/payments/**")
                         .uri("lb://bank-simulation-api-paymentslip"))
+                .route(p-> p
+                        .path("/transfer/**")
+                        .uri("lb://bank-simulation-api-transfer"))
                 .build();
     }
 }

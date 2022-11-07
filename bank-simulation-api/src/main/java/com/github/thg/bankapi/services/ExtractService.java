@@ -57,6 +57,16 @@ public class ExtractService extends GenericServiceImpl<Extract, Long>{
 		return extract;
 	}
 	
+	public Extract generateTransfer(Conta conta, Conta ContaDestino, TipoOperacao tipo,
+			Double saldoAnterior,Double saldoAtual, Double value) {
+		Calendar date = Calendar.getInstance();
+		Extract extract = new Extract(date, tipo, saldoAnterior,saldoAtual, value, conta);
+		extract.setInformation(createInformationTransfer(conta, ContaDestino, tipo, value, date));
+		extract = extractRepository.save(extract);
+		return extract;
+	}
+	
+	
 	
 	private String createInformation(Boolean credit, Conta conta, TipoOperacao tipo, Double value, Calendar date) {
 		if(credit) {
@@ -71,6 +81,11 @@ public class ExtractService extends GenericServiceImpl<Extract, Long>{
 		
 	}
 	
+	private String createInformationTransfer(Conta contaOrigem, Conta contaDestino, 
+			TipoOperacao tipo, Double value, Calendar date) {
+		return informationTransfer(contaOrigem,contaDestino, tipo, value, date);
+	
+}
 
 	private String informationWithdraw(Conta conta, TipoOperacao tipo, Double value,Calendar date) {
 		if(TipoOperacao.SAQUE.equals(tipo)) {
@@ -104,6 +119,20 @@ public class ExtractService extends GenericServiceImpl<Extract, Long>{
 			+ "BOLETO PAGO COM SUCESSO! VALOR DE R$ %.2f\n" 
 			+ "INFORMAÇÕES DO CLIENTE: %s %s, CONTA %s AG: %s", dataUtil.dataFormatada(date.getTime()), value, conta.getClient().getFirstName().split(" ")[0],
 			conta.getClient().getLastName().split(" ")[0],conta.getNumber(), conta.getAgency().getNumber());
+		} else {
+			return "Erro ao gerar o extrato";
+		}
+
+	}
+	
+	private String informationTransfer(Conta contaOrigem, Conta contaDestino, TipoOperacao tipo, Double value, Calendar date) {
+		if(TipoOperacao.TRANSFERENCIA.equals(tipo)) {
+			return String.format("DATA: %s \n"
+					+ "TRANFERÊNCIA REALIZADA DE R$ %.2f\n"
+					+ "DA CONTA %s, PARA A CONTA: %s", 
+					dataUtil.dataFormatada(date.getTime()), 
+					value, contaOrigem.getNumber(), 
+					contaDestino.getNumber());
 		} else {
 			return "Erro ao gerar o extrato";
 		}

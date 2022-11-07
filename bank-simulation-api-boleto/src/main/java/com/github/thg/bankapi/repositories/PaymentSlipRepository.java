@@ -6,4 +6,5 @@ import com.github.thg.bankapi.entities.PaymentSlip;
 
 public interface PaymentSlipRepository extends JpaRepository<PaymentSlip, Long> {
 
+
 }

@@ -1,7 +1,6 @@
 package com.github.thg.bankapi.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -117,6 +116,7 @@ public class PaymentSlipController {
 		ContaDto contaEncontrada = contaRequest.findById(id);
 		return ResponseEntity.ok(contaEncontrada);
 	}
+	
 	
 	@PostMapping("boleto")
 	public ResponseEntity<PaymentSlip> postBoleto(
